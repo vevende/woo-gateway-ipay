@@ -16,10 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once dirname( __FILE__ ) . '/includes/autoload.php';
+add_action( 'plugins_loaded', 'woo_gateway_payme' );
 
-add_action( 'plugins_loaded', 'woo_gateway_Payme' );
-
-function woo_gateway_Payme() {
+function woo_gateway_payme() {
+    spl_autoload_register('spl_autoload_register');
 	PaymePlugin::initialize();
+}
+
+function spl_autoload_register( $class_name ) {
+    $class_path = dirname( dirname( __FILE__ ) ) . '/classes/' . $class_name . '.php';
+    if ( file_exists( $class_path ) ) {
+        require_once $class_path;
+    }
 }
