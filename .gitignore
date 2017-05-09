@@ -1,0 +1,20 @@
+# IDE's
+project.xml
+project.properties
+.project
+.settings*
+.idea
+
+# OS X metadata
+.DS_Store
+
+# Windows junk
+Thumbs.db
+
+
+# Unit tests
+/tmp
+/tests/bin/tmp
+
+# Logs
+/logs
