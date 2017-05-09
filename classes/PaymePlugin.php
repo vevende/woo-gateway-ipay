@@ -1,6 +1,6 @@
 <?php
 
-class iPayPlugin extends Singleton {
+class PaymePlugin extends Singleton {
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'check_environment' ) );
@@ -34,7 +34,7 @@ class iPayPlugin extends Singleton {
 	}
 
 	public function register_gateway( $methods ) {
-		$methods[] = 'iPayGateway';
+		$methods[] = 'PaymeGateway';
 
 		return $methods;
 	}

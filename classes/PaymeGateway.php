@@ -1,6 +1,6 @@
 <?php
 
-class iPayGateway extends WC_Payment_Gateway {
+class PaymeGateway extends WC_Payment_Gateway {
 
 	/** @var bool Whether or not logging is enabled */
 	public static $log_enabled = false;

@@ -1,6 +1,6 @@
 <?php
 
-class iPayClient extends Singleton {
+class PaymeClient extends Singleton {
 	public function __construct( $gateway ) {
 		$this->gateway = $gateway;
 

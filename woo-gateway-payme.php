@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Woo Gateway iPay
- * Description: Payment Gateway for iPay in Woocommerce
+ * Plugin Name: Woo Gateway Payme
+ * Description: Payment Gateway for Payme in Woocommerce
  * Version: 1.0.0
  * Author: Vevende SRL
  * Author URI: https://www.vevende.com/
@@ -18,8 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once dirname( __FILE__ ) . '/includes/autoload.php';
 
-add_action( 'plugins_loaded', 'woo_gateway_ipay' );
+add_action( 'plugins_loaded', 'woo_gateway_Payme' );
 
-function woo_gateway_ipay() {
-	iPayPlugin::initialize();
+function woo_gateway_Payme() {
+	PaymePlugin::initialize();
 }

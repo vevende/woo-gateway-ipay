@@ -8,7 +8,7 @@ $settings = array(
 	'enabled' => array(
 		'title'   => __( 'Habilitar Medio de Pago', 'woocommerce' ),
 		'type'    => 'checkbox',
-		'label'   => __( 'Habilitar iPay', 'woocommerce' ),
+		'label'   => __( 'Habilitar Payme', 'woocommerce' ),
 		'default' => 'yes',
 	),
 
@@ -73,7 +73,7 @@ if ( get_woocommerce_currency() != "BOB" ) {
 	$settings['rate_convert'] = array(
 		'title'       => __( 'Tipo de Cambio (' . get_woocommerce_currency() . ') y (BOB)', 'woocommerce' ),
 		'type'        => 'text',
-		'description' => __( 'Tipo de cambio entre la moneda del sitio (' . get_woocommerce_currency() . ') y iPay.', 'woocommerce' ),
+		'description' => __( 'Tipo de cambio entre la moneda del sitio (' . get_woocommerce_currency() . ') y Payme.', 'woocommerce' ),
 		'default'     => '1',
 		'desc_tip'    => true,
 	);

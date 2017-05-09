@@ -1,4 +1,4 @@
-WooCommerce Gateway for iPay
+WooCommerce Gateway for Payme
 
 Copyright 2016 by the contributors
 

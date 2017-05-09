@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class iPayRequest {
+class PaymeRequest {
 	protected $gateway;
 	protected $notify_url;
 
