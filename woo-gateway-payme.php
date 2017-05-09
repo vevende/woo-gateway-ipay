@@ -6,7 +6,7 @@
  * Author: Vevende SRL
  * Author URI: https://www.vevende.com/
  *
- * @package WC_Gateway_TigoMoney
+ * @package WC_Gateway_Payme
  * @version 1.0.0
  * @category Gateway
  * @author Vevende SRL

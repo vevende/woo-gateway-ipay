@@ -13,12 +13,12 @@ class PaymeGateway extends WC_Payment_Gateway {
 	private $secret_key = null;
 
 	public function __construct() {
-		$this->id                 = 'tigomoney';
+		$this->id                 = 'payme';
 		$this->has_fields         = false;
-		$this->icon               = plugins_url( 'images/woocommerce-tigomoney.png', plugin_dir_path( __FILE__ ) );
-		$this->method_title       = 'Tigo Money';
-		$this->method_description = 'Pago en linea via Tigo Money Bolivia';
-		$this->order_button_text  = 'Pagar con Tigo Money';
+		$this->icon               = plugins_url( 'images/woocommerce-payme.png', plugin_dir_path( __FILE__ ) );
+		$this->method_title       = 'Payme';
+		$this->method_description = 'Pago en linea via Payme Bolivia';
+		$this->order_button_text  = 'Pagar con Payme';
 
 		$this->supports = array(
 			'products',
@@ -29,7 +29,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 		$this->testmode    = 'yes' === $this->get_option( 'testmode', 'no' );
 		$this->debug       = 'yes' === $this->get_option( 'debug', 'no' );
 
-		// Tigomoney credentials
+		// Payme credentials
 		$this->access_key = $this->get_option( 'access_key' );
 		$this->secret_key = $this->get_option( 'secret_key' );
 
@@ -41,11 +41,11 @@ class PaymeGateway extends WC_Payment_Gateway {
 		if ( ! $this->is_valid_for_use() ) {
 			$this->enabled = 'no';
 		} else {
-			add_action( 'woocommerce_update_options_payment_gateways_tigomoney', array(
+			add_action( 'woocommerce_update_options_payment_gateways_payme', array(
 				$this,
 				'process_admin_options'
 			) );
-			add_action( 'woocommerce_api_wc_gateway_tigomoney', array( $this, 'return_handler' ) );
+			add_action( 'woocommerce_api_wc_gateway_payme', array( $this, 'return_handler' ) );
 			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 		}
 	}
@@ -55,7 +55,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 		if ( $this->access_key != '' && $this->secret_key != '' ) {
 			// Check if the gateway is enabled in the user's country
 			return in_array( get_woocommerce_currency(),
-				apply_filters( 'woocommerce_paypal_supported_currencies', array( 'BOB', 'PYG', 'ZAR' ) ) );
+				apply_filters( 'woocommerce_payme_supported_currencies', array( 'BOB', 'PYG', 'ZAR','USD' ) ) );
 		}
 
 		return false;
@@ -67,7 +67,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 		} else {
 			?>
             <div class="inline error"><p>
-                    <strong><?php _e( 'Gateway disabled', 'woocommerce' ); ?></strong>: <?php _e( 'TigoMoney does not support your store currency.', 'woocommerce' ); ?>
+                    <strong><?php _e( 'Gateway disabled', 'woocommerce' ); ?></strong>: <?php _e( 'Payme does not support your store currency.', 'woocommerce' ); ?>
                 </p></div>
 			<?php
 		}
@@ -87,18 +87,18 @@ class PaymeGateway extends WC_Payment_Gateway {
 	}
 
 	public function receipt_page( $order_id ) {
-		echo '<p>Muchas Gracias, por favor paga con tu Billetera de Tigo Money</p>';
+		echo '<p>Muchas Gracias, por favor paga con tu Tarjeta de Crédito</p>';
 		$order  = wc_get_order( $order_id );
 		$posted = wp_unslash( $_POST );
 
-		if ( isset( $posted['tigomoney-phonenumber'] ) ) {
-			$phone = trim( $posted['tigomoney-phonenumber'] );
+		if ( isset( $posted['payme-phonenumber'] ) ) {
+			$phone = trim( $posted['payme-phonenumber'] );
 
 			if ( preg_match( "/^[6-7][0-9]{7}$/", $phone ) ) {
-				$tigomoney = new WC_Gateway_TigoMoney_Request( $this );
-				$pay_url   = $tigomoney->get_request_url( $order, $posted['tigomoney-phonenumber'] );
-				$mensaje   = $tigomoney->generate_arguments( $order, $posted['tigomoney-phonenumber'] );
-				$tigomoney->pagoTigo( $mensaje, $order );
+				$payme = new WC_Gateway_Payme_Request( $this );
+				$pay_url   = $payme->get_request_url( $order, $posted['payme-phonenumber'] );
+				$mensaje   = $payme->generate_arguments( $order, $posted['payme-phonenumber'] );
+				$payme->pagoPayme( $mensaje, $order );
 				exit();
 			} else {
 				echo '<p class="woocommerce-error">Por favor ingresa un número de movil válido.</p>';
@@ -115,9 +115,9 @@ class PaymeGateway extends WC_Payment_Gateway {
 
 	public function generate_form( $order ) {
 		$form = '<form action="" method="post" id="payment-form" target="_top">';
-		$form .= '<input type="text" id="id_tigomoney-phonenumber" name="tigomoney-phonenumber" required= value="" /> ';
+		$form .= '<input type="text" id="id_payme-phonenumber" name="payme-phonenumber" required= value="" /> ';
 		$form .= '<br><br>';
-		$form .= '<input type="submit" class="button alt" id="submit-payment-form" value="Pagar con TigoMoney" /> ';
+		$form .= '<input type="submit" class="button alt" id="submit-payment-form" value="Pagar con Payme" /> ';
 		$form .= '<a class="button cancel" href="' . esc_url( $order->get_cancel_order_url() ) . '">Cancelar</a>';
 		$form .= '</form>';
 
@@ -137,8 +137,8 @@ class PaymeGateway extends WC_Payment_Gateway {
 
 		if ( ! empty( $_GET ) ) {
 			if ( array_key_exists( 'r', $_GET ) ) {
-				$tigomoney = new WC_Gateway_TigoMoney_Request( $this );
-				$posted    = $tigomoney->get_response_arguments( str_replace( ' ', '+', $_GET['r'] ) );
+				$payme = new WC_Gateway_Payme_Request( $this );
+				$posted    = $payme->get_response_arguments( str_replace( ' ', '+', $_GET['r'] ) );
 				$order     = new WC_Order( $posted['orderId'] );
 
 				if ( $posted['codRes'] == '0' ) {
@@ -148,7 +148,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 				}
 
 			} else {
-				wp_die( 'Request Failure', 'TigoMoney Request', array( 'response' => 200 ) );
+				wp_die( 'Request Failure', 'Payme Request', array( 'response' => 200 ) );
 				exit();
 			}
 		}
@@ -168,7 +168,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 			'19'   => 'Comercio no habilitado para el pago, favor comunicarse con el comercio',
 			'23'   => 'El monto introducido es menor al requerido, favor verifique los datos',
 			'24'   => 'El monto introducido es mayor al requerido, favor verifique los datos',
-			'1001' => 'Los fondos en su Billetera movil son insuficientes, para cargar su billetera vaya al Punto Tigo Money mas cercano, marque *555#',
+			'1001' => 'Los fondos en su Billetera movil son insuficientes, para cargar su billetera vaya al Punto Payme mas cercano, marque *555#',
 			'1002' => 'No ingresaste tu PIN o ingresaste un PIN incorrecto, tu transaccion no pudo ser completada, inicia la transaccion nuevamente y verifica en transacciones por completar',
 			'1003' => 'Estimado Cliente llego a su limite de monto transaccionado, si tiene alguna consulta comuniquese con el *555',
 			'1004' => 'Estimado Cliente excedio su limite de intentos de introducir su PIN, por favor comuniquese con el *555 para solicitar su nuevo PIN',
@@ -177,9 +177,9 @@ class PaymeGateway extends WC_Payment_Gateway {
 
 
 		if ( array_key_exists( 'codRes', $posted ) ) {
-			wc_add_notice( 'Tigo Money > ' . $errormessages[ $posted['codRes'] ], 'error' );
+			wc_add_notice( 'Payme > ' . $errormessages[ $posted['codRes'] ], 'error' );
 		} else {
-			wc_add_notice( 'Tigo Money > Lo sentimos, hubo un error desconocido', 'error' );
+			wc_add_notice( 'Payme > Lo sentimos, hubo un error desconocido', 'error' );
 		}
 
 		$order->update_status( 'failed', 'Pago rechazado: ' . $posted['codRes'] . ' ' . $posted['mensaje'] );
@@ -201,7 +201,7 @@ class PaymeGateway extends WC_Payment_Gateway {
 
 		WC()->cart->empty_cart();
 
-		wc_add_notice( 'Tigo Money > ' . $posted['mensaje'], 'success' );
+		wc_add_notice( 'Payme > ' . $posted['mensaje'], 'success' );
 
 		wp_redirect( $this->get_return_url( $order ) );
 	}
