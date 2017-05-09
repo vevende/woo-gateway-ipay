@@ -8,7 +8,7 @@ class PaymePlugin extends Singleton {
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateway' ) );
 		add_filter( 'woocommerce_currencies', array( $this, 'add_currencies' ) );
 		add_filter( 'woocommerce_currency_symbol', array( $this, 'add_currencies_symbols' ) );
-		do_action( 'wc_tigo_money_loaded' );
+		do_action( 'wc_payme_loaded' );
 	}
 
 	public function check_environment() {
